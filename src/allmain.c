@@ -141,12 +141,22 @@ extern int random_seed;
 void
 write_level_info()
 {
-	s_level *lev = Is_special(&u.uz);
-	if (lev) {
-		fprintf(flevelinfo, "%d:%s:%d\n", random_seed, lev->proto, depth(&u.uz));
-		//pline("%s:%d\n", lev->proto, depth(&u.uz));
-	}
-	//wiz_map();
+        struct obj *obj;
+        struct obj *obj2;
+        for (obj = fobj; obj; obj = obj->nobj) {
+                if Is_container(obj){
+                for (obj2 = obj->cobj; obj2; obj2 = obj2->nobj) {
+                        if ((obj2->otyp == WAN_WISHING) && (distu(obj->ox,obj->oy)<9)) {
+                                fully_identify_obj(obj2);
+                                fprintf(flevelinfo, "%u:(%d,%d)(contained): %s\n", level_info[0].seed, obj->ox, obj->oy, doname(obj2));
+                        }
+                }
+                }
+                else if ((obj->otyp == WAN_WISHING) && (distu(obj->ox,obj->oy)<9)) {
+                fully_identify_obj(obj);
+                fprintf(flevelinfo, "%u:(%d,%d): %s\n", level_info[0].seed, obj->ox, obj->oy, doname(obj));
+                }
+        }
 }
 
 void
@@ -268,8 +278,8 @@ moveloop()
     touch_whereis();
 #endif
 
-	flevelinfo = fopen("level_info.txt", "a");
-	level_statistics(FALSE);
+	flevelinfo = fopen("seeds", "a");
+	write_level_info();
 	fclose(flevelinfo);
 	done(QUIT);
 
