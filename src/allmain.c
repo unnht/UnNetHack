@@ -141,22 +141,32 @@ extern int random_seed;
 void
 write_level_info()
 {
-        struct obj *obj;
-        struct obj *obj2;
-        for (obj = fobj; obj; obj = obj->nobj) {
-                if Is_container(obj){
-                for (obj2 = obj->cobj; obj2; obj2 = obj2->nobj) {
-                        if ((obj2->otyp == WAN_WISHING) && (distu(obj->ox,obj->oy)<9)) {
-                                fully_identify_obj(obj2);
-                                fprintf(flevelinfo, "%u:(%d,%d)(contained): %s\n", level_info[0].seed, obj->ox, obj->oy, doname(obj2));
-                        }
-                }
-                }
-                else if ((obj->otyp == WAN_WISHING) && (distu(obj->ox,obj->oy)<9)) {
-                fully_identify_obj(obj);
-                fprintf(flevelinfo, "%u:(%d,%d): %s\n", level_info[0].seed, obj->ox, obj->oy, doname(obj));
-                }
-        }
+	struct obj *obj;
+	struct obj *obj2;
+	struct monst *mon;
+	for (obj = fobj; obj; obj = obj->nobj) {
+		if Is_container(obj){
+		fully_identify_obj(obj);
+		fprintf(flevelinfo, "%s:%d(%d,%d): %s containing...\n",dungeons[u.uz.dnum].dname,depth(&u.uz), obj->ox, obj->oy, doname(obj));
+		for (obj2 = obj->cobj; obj2; obj2 = obj2->nobj) {
+			if (objects[obj2->otyp].oc_magic) {
+				fully_identify_obj(obj2);
+				fprintf(flevelinfo, "\t\t%s\n", doname(obj2)); 
+			}
+		}
+		}
+		else if (objects[obj->otyp].oc_magic || obj->oclass == POTION_CLASS || obj->oclass == SCROLL_CLASS) {
+		fully_identify_obj(obj);
+		fprintf(flevelinfo, "%s:%d(%d,%d): %s\n",dungeons[u.uz.dnum].dname,depth(&u.uz), obj->ox, obj->oy, doname(obj));
+		}
+	}
+	for (mon = fmon; mon; mon = mon->nmon)
+		for (obj = mon->minvent; obj; obj = obj->nobj) {
+			if (objects[obj->otyp].oc_magic || obj->oclass == POTION_CLASS || obj->oclass == SCROLL_CLASS) {
+				fully_identify_obj(obj);
+				fprintf(flevelinfo, "%s:%d(%d,%d): %s\n",noit_mon_nam(mon),depth(&u.uz), mon->mx, mon->my, doname(obj));
+			}
+		}
 }
 
 void
@@ -277,9 +287,11 @@ moveloop()
 #ifdef WHEREIS_FILE
     touch_whereis();
 #endif
-
-	flevelinfo = fopen("seeds", "a");
+	char dumploot[12];
+	sprintf(dumploot, "%u", level_info[0].seed);
+	flevelinfo = fopen(dumploot, "a");
 	write_level_info();
+	level_statistics(FALSE);
 	fclose(flevelinfo);
 	done(QUIT);
 
