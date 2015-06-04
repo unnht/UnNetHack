@@ -1124,10 +1124,12 @@ boolean at_stairs, falling, portal;
 	/* Prevent the player from going past the first quest level unless
 	 * (s)he has been given the go-ahead by the leader.
 	 */
+	/*
 	if (on_level(&u.uz, &qstart_level) && !newdungeon && !ok_to_quest()) {
 		pline("A mysterious force prevents you from descending.");
 		return;
 	}
+	*/
 
 	if (on_level(newlevel, &u.uz)) return;		/* this can happen */
 
@@ -1425,6 +1427,7 @@ boolean at_stairs, falling, portal;
 	 *  Move all plines beyond the screen reset.
 	 */
 
+#if LEVEL_STAT
 	/* give room entrance message, if any */
 	check_special_room(FALSE);
 
@@ -1539,6 +1542,7 @@ boolean at_stairs, falling, portal;
 	    final_level();
 	else
 	    onquest();
+#endif
 	assign_level(&u.uz0, &u.uz); /* reset u.uz0 */
 
 	/* show level annotation when entering the level */

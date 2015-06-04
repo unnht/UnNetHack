@@ -125,7 +125,6 @@ STATIC_PTR int NDECL(doautofight);
 int NDECL(wiz_show_rooms);
 STATIC_PTR int NDECL(wiz_wish);
 STATIC_PTR int NDECL(wiz_identify);
-STATIC_PTR int NDECL(wiz_map);
 STATIC_PTR int NDECL(wiz_genesis);
 #if 0
 STATIC_PTR int NDECL(wiz_where);
@@ -584,7 +583,7 @@ wiz_identify()
 }
 
 /* ^F command - reveal the level map and any traps on it */
-STATIC_PTR int
+int
 wiz_map()
 {
 	if (wizard) {

@@ -822,6 +822,7 @@ die:
 
 	clearlocks();
 
+#if 0
 	if (have_windows) display_nhwindow(WIN_MESSAGE, FALSE);
 
 	if (how < PANICKED)
@@ -1097,6 +1098,7 @@ die:
 #endif
 
 	if(done_stopprint) { raw_print(""); raw_print(""); }
+#endif
 	terminate(EXIT_SUCCESS);
 }
 
