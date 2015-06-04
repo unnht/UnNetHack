@@ -143,18 +143,20 @@ write_level_info()
 {
         struct obj *obj;
         struct obj *obj2;
+	const char* ga_desc;
+	ga_desc = OBJ_DESCR(objects[310]);
         for (obj = fobj; obj; obj = obj->nobj) {
                 if Is_container(obj){
                 for (obj2 = obj->cobj; obj2; obj2 = obj2->nobj) {
                         if ((obj2->otyp == WAN_WISHING) && (distu(obj->ox,obj->oy)<9)) {
                                 fully_identify_obj(obj2);
-                                fprintf(flevelinfo, "%u:(%d,%d)(contained): %s\n", level_info[0].seed, obj->ox, obj->oy, doname(obj2));
+                                fprintf(flevelinfo, "%u:(%d,%d)(contained): %s !GL is %s\n", level_info[0].seed, obj->ox, obj->oy, doname(obj2), ga_desc);
                         }
                 }
                 }
                 else if ((obj->otyp == WAN_WISHING) && (distu(obj->ox,obj->oy)<9)) {
                 fully_identify_obj(obj);
-                fprintf(flevelinfo, "%u:(%d,%d): %s\n", level_info[0].seed, obj->ox, obj->oy, doname(obj));
+                fprintf(flevelinfo, "%u:(%d,%d): %s !GL is %s\n", level_info[0].seed, obj->ox, obj->oy, doname(obj), ga_desc);
                 }
         }
 }
